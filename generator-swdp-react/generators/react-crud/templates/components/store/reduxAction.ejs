@@ -1,0 +1,50 @@
+<% var capitalizeFirstLetter = (word) => word.replace(/\w/, c => c.toUpperCase()) -%>
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { showSuccess } from 'middleware/notification/store/notification.actions'
+import axios from '../../../axios'
+
+const endPoint = "<%- entityName %>"
+
+export const fetch<%- capitalizeFirstLetter(entityName) %> = createAsyncThunk("<%- entityName %>/fetch<%- capitalizeFirstLetter(entityName) %>", async () => {
+    const response = await axios.get(`/${endPoint}`);
+    const <%- entityName %> = await response.data;
+    return <%- entityName %>;
+});
+
+export const add<%- capitalizeFirstLetter(entityName) %> = createAsyncThunk("<%- entityName %>/add<%- capitalizeFirstLetter(entityName) %>", async (data, thunkAPI) => {
+      const response = await axios.post(`/${endPoint}`, data);
+      const <%- entityName %> = await response.data;
+      thunkAPI.dispatch(showSuccess("<%- capitalizeFirstLetter(entityName) %> added successfully"))
+      return <%- entityName %>;
+});
+  
+export const edit<%- capitalizeFirstLetter(entityName) %> =  createAsyncThunk("<%- entityName %>/edit<%- capitalizeFirstLetter(entityName) %>", async (data, thunkAPI) => {
+
+      let body = {
+        ...data
+      }
+
+      delete body['id'];
+      
+      const response = await axios.put(
+        `/${endPoint}/${data.id}`,
+        body
+      );
+      const <%- entityName %> = await response.data;
+      thunkAPI.dispatch(showSuccess("<%- capitalizeFirstLetter(entityName) %> updated successfully"))
+      return <%- entityName %>;
+});
+  
+export const delete<%- capitalizeFirstLetter(entityName) %> = createAsyncThunk("<%- entityName %>/delete<%- capitalizeFirstLetter(entityName) %>", async (data, thunkAPI) => {
+      const response = await axios.delete(
+        `/${endPoint}/${data.id}`
+      );
+      const status = await response.status;
+      if(status === 200) {
+        thunkAPI.dispatch(showSuccess("Selected <%- entityName %> deleted successfully."))
+        return data.id
+      }
+});
+  
+    
+       

@@ -1,0 +1,23 @@
+{
+  "name": "generator-swdp-react",
+  "version": "1.0.0",
+  "description": "rapidx react",
+  "main": "index.js",
+  "files": [
+    "generators"
+  ],
+  "keywords": [
+    "yeoman-generator",
+    "rapidx",
+    "rapidx-react",
+    "generator-rapidx"
+  ],
+  "dependencies": {
+    "escodegen-wallaby": "^1.6.35",
+    "esprima": "^4.0.1",
+    "esprima-walk": "^0.1.0",
+    "gulp-prettier": "^4.0.0",
+    "yeoman-generator": "^5.7.0"
+  },
+  "author": "Hexaware"
+}

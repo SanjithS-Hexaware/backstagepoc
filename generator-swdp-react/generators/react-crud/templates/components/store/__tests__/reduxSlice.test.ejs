@@ -1,0 +1,101 @@
+<% const getRandomValueByType = (name, type) => {
+    if(type == "string"|| type === "byte" || type === "binary")
+        return `"${name}"`
+    else if(type == "integer" || type == "int32" || type == "int64" || type == "number")
+        return (Math.floor(((Math.random() * 100) + 1)))
+    else if(type == "decimal")
+        return (Math.floor(((Math.random() * 100) + 1)*100))/100;
+    else if(type == "boolean")
+        return Math.random() < 0.5;
+    else if(type == "datetime"|| type == "date")
+        var date=Date();
+        return `"${date}"`;
+}
+-%>
+<% const getRandomValueByType1 = (name, type) => {
+    if(type == "string")
+        return `"${name}"`
+    else if(type == "integer" || type == "int32" || type == "int64" || type == "number")
+        return (Math.floor(((Math.random() * 100) + 1)))
+    else if(type == "decimal")
+        return (Math.floor(((Math.random() * 100) + 1)*100))/100;
+    else if(type == "boolean")
+        return Math.random() < 0.5;
+    else if(type == "datetime")
+        return `"${name}"`;
+}
+-%>
+<% var capitalizeFirstLetter = (word) => word.replace(/\w/, c => c.toUpperCase()) -%>
+<% var genLinesForGettingLabels = (fields) => { fields.forEach((field) => {-%>
+    const <%= field.name%>Element = screen.getByLabelText(/<%= capitalizeFirstLetter(field.name)%>/i)
+<% })}-%>
+<% var camelCase = (str) => {-%>
+<%return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {-%>
+<%return index === 0 ? word.toLowerCase() : word.toUpperCase();-%>
+<%}).replace(/\s+/g, '');-%>
+<%}-%>
+import store from 'store/store'
+import { <%- camelCase(entityName) %>Added, <%- camelCase(entityName) %>Deleted, <%- camelCase(entityName) %>Updated } from '../<%- camelCase(entityName) %>Slice';
+
+describe("testing <%- camelCase(entityName) %> redux store reducers", () => {
+  test('add <%- camelCase(entityName) %> to store test', () => {
+    let state = store.getState().<%- camelCase(entityName) %>;
+    expect(state.entities).toHaveLength(0);
+    const initialInput = {
+        id: 1,
+        <% fields.forEach((field) => {-%>
+            <%= field.name%>:<%- getRandomValueByType(field.name, field.datatype)%>,
+        <% })-%>
+      }
+    store.dispatch(<%- camelCase(entityName) %>Added(initialInput));
+    state = store.getState().<%- camelCase(entityName) %>;
+    expect(state.entities).toHaveLength(1);
+
+  });
+
+  test('update <%- camelCase(entityName) %> from store should change the length of the entities array in redux store', () => {
+    const initialInput = {
+        id: 2,
+        <% fields.forEach((field) => {-%>
+            <%= field.name%>:<%- getRandomValueByType(field.name, field.datatype)%>,
+        <% })-%>
+      }
+    store.dispatch(<%- camelCase(entityName) %>Added(initialInput));
+    let state = store.getState().<%- camelCase(entityName) %>;
+    expect(state.entities).toHaveLength(2);
+
+    const updatedInput = {
+        id: initialInput.id,
+        <% fields.forEach((field) => {-%>
+            <%= field.name%>:<%- getRandomValueByType1(field.name, field.datatype)%>,
+        <% })-%>
+      }
+    store.dispatch(<%- camelCase(entityName) %>Updated(updatedInput));
+    state = store.getState().<%- camelCase(entityName) %>;
+    let changed<%- capitalizeFirstLetter(entityName) %> = state.entities.find((p) => p.id === 2);
+    expect(changed<%- capitalizeFirstLetter(entityName) %>).toStrictEqual(updatedInput);
+
+  });
+
+
+  test('delete <%- camelCase(entityName) %> from store should reduce the length of the entities array in redux store', () => {
+    const initialInput = {
+        id: 3,
+        <% fields.forEach((field) => {-%>
+            <%= field.name%>:<%- getRandomValueByType(field.name, field.datatype)%>,
+        <% })-%>
+      }
+    store.dispatch(<%- camelCase(entityName) %>Added(initialInput));
+    let state = store.getState().<%- camelCase(entityName) %>;
+    expect(state.entities).toHaveLength(3);
+
+    store.dispatch(<%- camelCase(entityName) %>Deleted({
+      id: initialInput.id
+    }));
+    state = store.getState().<%- camelCase(entityName) %>;
+    expect(state.entities).toHaveLength(2);
+
+  });
+
+})
+

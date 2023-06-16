@@ -1,0 +1,170 @@
+<% var capitalizeFirstLetter = (word) => word.replace(/\w/, c => c.toUpperCase()) -%>
+<% var camelCase = (str) => {-%>
+<% return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {-%>
+<% return index === 0 ? word.toLowerCase() : word.toUpperCase();-%>
+<% }).replace(/\s+/g, '');-%>
+<% }-%>
+<% var getTargetKeyArray = (array, target) => { return array.map(value => camelCase(value[target]) )} -%>
+<% var mapEntityToObjects = (array,entityName) => {  array.forEach(function(property){-%>
+    <% if(property.datatype === "datetime"||property.datatype == "date"){-%> 
+        const [<%= property.name -%>, set<%= capitalizeFirstLetter(property.name) -%>] = useState(<%= entityName %>.<%= property.name -%>.split("T")[0])
+        <% } else{-%>
+            const [<%= property.name -%>, set<%= capitalizeFirstLetter(property.name) -%>] = useState(<%= entityName %>.<%= property.name -%>)
+        <% } -%> 
+<%})}-%>
+<% var getParsedData = (property, type) => {-%>
+    <% if(type == "integer" || type == "int32" || type == "int64" || type == "number"){-%>
+        set<%= capitalizeFirstLetter(property) -%>(parseInt(e.target.value))
+    <%} else if(type == "decimal"){-%>
+        set<%= capitalizeFirstLetter(property) -%>(parseFloat(e.target.value))
+    <%} else{-%>
+        set<%= capitalizeFirstLetter(property) -%>(e.target.value)
+<%}}-%>
+<% var mapEntityToObjects1 = (array,key,entityName) => { array.forEach(function(property){-%>
+    const handle<%= capitalizeFirstLetter(property.name) -%> = (e) => <%= getParsedData(property.name, property.datatype) -%>
+<%})}-%>
+<% var mapEntityToObjects2 = (array,key) => { getTargetKeyArray(array, key).forEach(function(property){-%>
+    set<%= capitalizeFirstLetter(property) -%>('')
+<%})}-%>
+<% var mapEntityToObjects3 = (array) => { array.forEach(function(property){-%>
+    <% if (property.datatype === "string"|| property.datatype === "byte" || property.datatype === "binary) {-%> 
+        <TextField
+        type="text"
+        name="<%= property.name -%>"
+        id="<%= camelCase(property.name) -%>Input"
+        onChange={handle<%= capitalizeFirstLetter(property.name) -%>}
+        value={<%= camelCase(property.name) -%>}
+        validators={['required']}
+        label="<%= capitalizeFirstLetter(property.name) -%>"
+        errorMessages={['this field is required']}
+        />
+        <% } else if(property.datatype === "integer" || property.datatype === "int32" || property.datatype === "int64"
+                    || property.datatype === "number" || property.datatype === "decimal") {-%>
+        <TextField
+        type="number"
+        name="<%= property.name -%>"
+        id="<%= camelCase(property.name) -%>Input"
+        onChange={handle<%= capitalizeFirstLetter(property.name) -%>}
+        value={<%= camelCase(property.name) -%> || ""}
+        validators={['required']}
+        label="<%= capitalizeFirstLetter(property.name) -%>"
+        errorMessages={['this field is required']}
+        />
+        <% } else if (property.datatype === "boolean") {-%>
+          <TextField
+          value={<%= camelCase(property.name) -%>}
+          onChange={handle<%= capitalizeFirstLetter(property.name) -%>}
+          select 
+          id="<%= camelCase(property.name) -%>Input"
+          label="<%= capitalizeFirstLetter(property.name) -%>"
+          validators={['required']}
+          errorMessages={['this field is required']}
+      >
+          <MenuItem value={true}>
+              True
+          </MenuItem>
+          <MenuItem value={false}>
+              False
+          </MenuItem>
+      </TextField>
+      <% } else if(property.datatype == "datetime"|| property.datatype == "date"){-%>
+        <TextField
+        
+    type="date"
+    name="<%= property.name -%>"
+    id="<%= camelCase(property.name) -%>Input"
+    onChange={handle<%= capitalizeFirstLetter(property.name) -%>}
+    value={<%= camelCase(property.name) -%>}
+    validators={['required']}
+    errorMessages={['this field is required']}
+    />
+        <% } -%>
+<%})}-%>
+
+import { Breadcrumb, SimpleCard } from 'components'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
+
+import { edit<%- capitalizeFirstLetter(entityName) %>, fetch<%- capitalizeFirstLetter(entityName) %>} from './store/<%- entityName %>.action'
+import { Button, Icon, Grid, MenuItem } from '@mui/material'
+import { styled } from '@mui/system'
+import { Span } from 'components/Typography'
+import React, { useState } from 'react'
+import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
+
+const TextField = styled(TextValidator)(() => ({
+    width: '100%',
+    marginBottom: '16px',
+}))
+
+const Container = styled('div')(({ theme }) => ({
+    margin: '30px',
+    [theme.breakpoints.down('sm')]: {
+        margin: '16px',
+    },
+    '& .breadcrumb': {
+        marginBottom: '30px',
+        [theme.breakpoints.down('sm')]: {
+            marginBottom: '16px',
+        },
+    },
+}))
+
+const Edit<%- capitalizeFirstLetter(entityName) %> = () => {
+    const { id:<%- entityName %>Id } = useParams()
+
+    const <%- entityName %> = useSelector((state) =>
+        state.<%- entityName %>.entities.find((<%- entityName %>) => <%- entityName %>.id.toString() === <%- entityName %>Id.toString())
+    )
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+
+    <%= mapEntityToObjects(fields, entityName) -%>
+
+    <%= mapEntityToObjects1(fields,"name", entityName) -%>
+
+    const handleClick = (e) => {
+        e.preventDefault()
+        dispatch(
+            edit<%- capitalizeFirstLetter(entityName) %>({
+                id: <%- entityName %>Id,
+                <%= getTargetKeyArray(fields, "name") %> 
+            })
+        ).then(()=>{
+            dispatch(fetch<%- capitalizeFirstLetter(entityName) %>())
+        })
+        navigate('/<%- entityName %>')
+    }
+
+
+    return (
+        <Container>
+            <div className="breadcrumb">
+                <Breadcrumb
+                    routeSegments={[
+                        { name: 'Edit<%- capitalizeFirstLetter(entityName) %>', path: '/<%- entityName %>' },
+                        { name: 'Form' },
+                    ]}
+                />
+            </div>
+            <SimpleCard title="Edit Form">
+                <ValidatorForm onSubmit={handleClick} onError={() => null}>
+                    <Grid container spacing={6}>
+                        <Grid item lg={6} md={6} sm={12} xs={12} sx={{ mt: 2 }}>
+                            <%= mapEntityToObjects3(fields) -%>
+                        </Grid>
+                    </Grid>
+                    <Button type="submit" color="primary" variant="contained">
+                        <Icon>send</Icon>
+                        <Span sx={{ pl: 1, textTransform: 'capitalize' }}>
+                            Save
+                        </Span>
+                    </Button>
+                </ValidatorForm>
+            </SimpleCard>
+        </Container>
+    )
+}
+
+export default Edit<%- capitalizeFirstLetter(entityName) %>

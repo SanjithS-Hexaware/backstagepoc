@@ -37,6 +37,8 @@ spec:
 
   # These steps are executed in the scaffolder backend, using data that we gathered
   # via the parameters above.
+
+
   steps:
     # Each step executes an action, in this case one templates files into the working directory.
     - id: fetch-base
@@ -44,6 +46,7 @@ spec:
       action: fetch:template
       input:
         url: ./content
+        targetPath: ${{ parameters.name }} 
         values:
           name: ${{ parameters.name }}
 
@@ -61,8 +64,7 @@ spec:
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
+        catalogInfoUrl: https://github.com/${{ parameters.repoUrl.split("=")[1].split("&")[0] }}/${{ parameters.repoUrl.split("=")[2] }}/blob/master/${{ parameters.name }}/catalog-info.yaml
 
   # Outputs are displayed to the user after a successful execution of the template.
   output:

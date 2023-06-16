@@ -1,0 +1,25 @@
+<% var capitalizeFirstLetter = (word) => word.replace(/\w/, c => c.toUpperCase()) -%>
+
+import React, { lazy } from 'react'
+import Loadable from 'components/Loadable/Loadable'
+
+const <%- capitalizeFirstLetter(entityName) %>List = Loadable(lazy(() => import('./<%- capitalizeFirstLetter(entityName) %>List')))
+const Edit<%- capitalizeFirstLetter(entityName) %> = Loadable(lazy(() => import('./Edit<%- capitalizeFirstLetter(entityName) %>')))
+const Add<%- capitalizeFirstLetter(entityName) %> = Loadable(lazy(() => import('./Add<%- capitalizeFirstLetter(entityName) %>')))
+
+const <%- entityName %>Routes = [
+    {
+        path: '/<%- entityName %>',
+        element: <<%- capitalizeFirstLetter(entityName) %>List />,
+    },
+    {
+        path: '/<%- entityName %>/edit/:id',
+        element: <Edit<%- capitalizeFirstLetter(entityName) %> />,
+    },
+    {
+        path: '/<%- entityName %>/add',
+        element: <Add<%- capitalizeFirstLetter(entityName) %> />,
+    },
+]
+
+export default <%- entityName %>Routes

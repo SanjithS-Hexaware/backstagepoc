@@ -13,6 +13,11 @@ backend:
   #   keys:
   #     - secret: ${BACKEND_SECRET}
   baseUrl: http://localhost:7007
+  reading:
+    allow:
+      - host: '*.github.com'
+      - host: github.com
+        paths: ['/api/']
   listen:
     port: 7007
     # Uncomment the following host directive to bind to specific interfaces
@@ -84,6 +89,12 @@ catalog:
     # Local example template
     - type: file
       target: ../../examples/template/template.yaml
+      rules:
+        - allow: [Template]
+
+    # For React Template
+    - type: file
+      target: ../../examples/template/templatereact.yaml
       rules:
         - allow: [Template]
 

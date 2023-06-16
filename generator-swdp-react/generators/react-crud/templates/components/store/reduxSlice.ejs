@@ -1,0 +1,114 @@
+<% var capitalizeFirstLetter = (word) => word.replace(/\w/, c => c.toUpperCase()) -%>
+<% var camelCase = (str) => {-%>
+<%    return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {-%>
+<%      return index === 0 ? word.toLowerCase() : word.toUpperCase();-%>
+<%    }).replace(/\s+/g, '');-%>
+<% }-%>
+<% var getTargetKeyArray = (array, target) => { return array.map(value => camelCase(value[target]) )} -%>
+<% var mapEntityToObjects = (array,key,prefix,entityName) => { getTargetKeyArray(array, key).forEach(function(property){-%>
+        <%= prefix %><%= capitalizeFirstLetter(entityName) -%>.<%= property %> = <%= property -%> 
+<%})}-%>
+import { createSlice } from "@reduxjs/toolkit";
+import { fetch<%= capitalizeFirstLetter(entityName) %> } from "./<%= entityName %>.action";
+import { add<%= capitalizeFirstLetter(entityName) %> } from "./<%= entityName %>.action";
+import { edit<%= capitalizeFirstLetter(entityName) %> } from "./<%= entityName %>.action";
+import { delete<%= capitalizeFirstLetter(entityName) %> } from "./<%= entityName %>.action";
+
+
+const fetch<%= capitalizeFirstLetter(entityName) %>ExtraReducer = {
+  [fetch<%= capitalizeFirstLetter(entityName) %>.pending]: (state, action) => {
+    state.loading = true;
+  },
+  [fetch<%= capitalizeFirstLetter(entityName) %>.fulfilled]: (state, action) => {
+    state.entities = [...action.payload];
+    state.loading = false;
+  },
+  [fetch<%= capitalizeFirstLetter(entityName) %>.rejected]: (state, action) => {
+    state.loading = false;
+  }
+}
+
+const add<%= capitalizeFirstLetter(entityName) %>ExtraReducer = {
+  [add<%= capitalizeFirstLetter(entityName) %>.pending]: (state, action) => {
+    state.loading = true;
+  },
+  [add<%= capitalizeFirstLetter(entityName) %>.fulfilled]: (state, action) => {
+    state.entities.push(action.payload)
+    state.loading = false;
+  },
+  [add<%= capitalizeFirstLetter(entityName) %>.rejected]: (state, action) => {
+    state.loading = false;
+  }
+}
+
+const edit<%= capitalizeFirstLetter(entityName) %>ExtraReducer = {
+  [edit<%= capitalizeFirstLetter(entityName) %>.pending]: (state, action) => {
+    state.loading = true;
+  },
+  [edit<%= capitalizeFirstLetter(entityName) %>.fulfilled]: (state, action) => {
+    const { id, <%= getTargetKeyArray(fields, "name") %> } = action.payload;
+    const existing<%= capitalizeFirstLetter(entityName) %> = state.entities.find((<%= entityName %>) => <%= entityName %>?.id?.toString() === id?.toString());
+    if (existing<%= capitalizeFirstLetter(entityName) %>) {
+    <%= mapEntityToObjects(fields,"name", "existing", entityName) -%>
+    }
+    state.loading = false;
+  },
+  [edit<%= capitalizeFirstLetter(entityName) %>.rejected]: (state, action) => {
+    state.loading = false;
+  }
+}
+
+const delete<%= capitalizeFirstLetter(entityName) %>ExtraReducer = {
+  [delete<%= capitalizeFirstLetter(entityName) %>.pending]: (state, action) => {
+    state.loading = true;
+  },
+  [delete<%= capitalizeFirstLetter(entityName) %>.fulfilled]: (state, action) => {
+    const id = action.payload;
+    const existing<%= capitalizeFirstLetter(entityName) %> = state.entities.find((<%= entityName %>) => <%= entityName %>.id.toString() === id.toString());
+    if (existing<%= capitalizeFirstLetter(entityName) %>) {
+      state.entities = state.entities.filter((<%= entityName %>) => <%= entityName %>.id !== id);
+    }
+    state.loading = false;
+  },
+  [delete<%= capitalizeFirstLetter(entityName) %>.rejected]: (state, action) => {
+    state.loading = false;
+  }
+}
+const <%= entityName %>Slice = createSlice({
+  name: "<%= entityName %>",
+  initialState: {
+    entities: [],
+    loading: false,
+  },
+  reducers: {
+    <%= entityName %>Added(state, action) {
+      state.entities.push(action.payload);
+    },
+    <%= entityName %>Updated(state, action) {
+      const { id, <%= getTargetKeyArray(fields, "name") %> } = action.payload;
+      const existing<%= capitalizeFirstLetter(entityName) %> = state.entities.find((<%= entityName %>) => <%= entityName %>.id.toString() === id.toString());
+      if (existing<%= capitalizeFirstLetter(entityName) %>) {
+        <%= mapEntityToObjects(fields,"name", "existing", entityName) -%>
+    }
+    },
+    <%= entityName %>Deleted(state, action) {
+      const { id } = action.payload;
+      const existing<%= capitalizeFirstLetter(entityName) %> = state.entities.find((<%= entityName %>) => <%= entityName %>.id.toString() === id.toString());
+      if (existing<%= capitalizeFirstLetter(entityName) %>) {
+        state.entities = state.entities.filter((<%= entityName %>) => <%= entityName %>.id !== id);
+      }
+    },
+  },
+  extraReducers: {
+    ...fetch<%= capitalizeFirstLetter(entityName) %>ExtraReducer,
+    ...add<%= capitalizeFirstLetter(entityName) %>ExtraReducer,
+    ...edit<%= capitalizeFirstLetter(entityName) %>ExtraReducer,
+    ...delete<%= capitalizeFirstLetter(entityName) %>ExtraReducer
+  },
+});
+
+
+
+export const { <%= entityName %>Added, <%= entityName %>Updated, <%= entityName %>Deleted } = <%= entityName %>Slice.actions;
+
+export default <%= entityName %>Slice.reducer;
