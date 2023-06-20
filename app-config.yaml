@@ -98,6 +98,12 @@ catalog:
       rules:
         - allow: [Template]
 
+    # For Nest From Github
+    - type: url
+      target: https://github.com/RutujaGadhave-Hexaware/NestGenerator/blob/main/generator-swdp-nestjs/generators/nest.yaml
+      rules:
+        - allow: [Template]
+
     # Local example organizational data
     - type: file
       target: ../../examples/org.yaml

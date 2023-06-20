@@ -50,27 +50,36 @@ spec:
         values:
           name: ${{ parameters.name }}
 
-    # This step publishes the contents of the working directory to GitHub.
-    - id: publish
-      name: Publish
-      action: publish:github
+    - id: repo-check
+      name: Repository Check
+      action: publish:github:pull-request
       input:
-        allowedHosts: ['github.com']
-        description: This is ${{ parameters.name }}
         repoUrl: ${{ parameters.repoUrl }}
+        branchName: master
+        title: RepoCheck
+        description: RepoCheck
 
-    # The final step is to register our new component in the catalog.
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        catalogInfoUrl: https://github.com/${{ parameters.repoUrl.split("=")[1].split("&")[0] }}/${{ parameters.repoUrl.split("=")[2] }}/blob/master/${{ parameters.name }}/catalog-info.yaml
+    # This step publishes the contents of the working directory to GitHub.
+  #   - id: publish
+  #     name: Publish
+  #     action: publish:github
+  #     input:
+  #       allowedHosts: ['github.com']
+  #       description: This is ${{ parameters.name }}
+  #       repoUrl: ${{ parameters.repoUrl }}
 
-  # Outputs are displayed to the user after a successful execution of the template.
-  output:
-    links:
-      - title: Repository
-        url: ${{ steps['publish'].output.remoteUrl }}
-      - title: Open in catalog
-        icon: catalog
-        entityRef: ${{ steps['register'].output.entityRef }}
+  #   # The final step is to register our new component in the catalog.
+  #   - id: register
+  #     name: Register
+  #     action: catalog:register
+  #     input:
+  #       catalogInfoUrl: https://github.com/${{ parameters.repoUrl.split("=")[1].split("&")[0] }}/${{ parameters.repoUrl.split("=")[2] }}/blob/master/${{ parameters.name }}/catalog-info.yaml
+
+  # # Outputs are displayed to the user after a successful execution of the template.
+  # output:
+  #   links:
+  #     - title: Repository
+  #       url: ${{ steps['publish'].output.remoteUrl }}
+  #     - title: Open in catalog
+  #       icon: catalog
+  #       entityRef: ${{ steps['register'].output.entityRef }}
