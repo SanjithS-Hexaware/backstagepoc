@@ -34,7 +34,7 @@ backend:
   # The production database configuration is stored in app-config.production.yaml
   database:
     client: pg
-    connection: postgres://SanjithS-Hexaware:XnebfIc1rG4j@ep-fancy-cherry-300145.us-east-2.aws.neon.tech?sslmode=require
+    connection: postgresql://SanjithS-Hexaware:NGzVFoM9uR0w@ep-soft-scene-153700.ap-southeast-1.aws.neon.tech?sslmode=require
   cache:
     store: memory
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
@@ -95,12 +95,6 @@ catalog:
     # For React Template
     - type: file
       target: ../../examples/template/templatereact.yaml
-      rules:
-        - allow: [Template]
-
-    # For Nest From Github
-    - type: url
-      target: https://github.com/RutujaGadhave-Hexaware/NestGenerator/blob/main/generator-swdp-nestjs/generators/nest.yaml
       rules:
         - allow: [Template]
 

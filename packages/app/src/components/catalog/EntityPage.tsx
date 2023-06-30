@@ -26,10 +26,7 @@ import {
   hasCatalogProcessingErrors,
   isOrphan,
 } from '@backstage/plugin-catalog';
-import {
-  isGithubActionsAvailable,
-  EntityGithubActionsContent,
-} from '@backstage/plugin-github-actions';
+import { isGithubActionsAvailable, EntityGithubActionsContent } from '@backstage/plugin-github-actions';
 import {
   EntityUserProfileCard,
   EntityGroupProfileCard,
@@ -77,7 +74,7 @@ const cicdContent = (
     <EntitySwitch.Case if={isCircleCIAvailable}>
       <EntityCircleCIContent />
     </EntitySwitch.Case>
-    
+
     <EntitySwitch.Case>
       <EmptyState
         title="No CI/CD available for this entity"
@@ -170,6 +167,9 @@ const serviceEntityPage = (
 
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/github-actions" title="GitHub Actions">
+      <EntityGithubActionsContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
