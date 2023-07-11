@@ -3,6 +3,9 @@ kind: Component
 metadata:
   name: backstagepoc
   description: An example of a Backstage application.
+  annotations:
+    # instanceName and github-organization-project-name are optional. The value is a string and should be enclosed in double quotes ""
+    jenkins.io/job-full-name: "SanjithS-Hexaware/backstagepoc"
   # Example for optional annotations
   # annotations:
   #   github.com/project-slug: backstage/backstage
