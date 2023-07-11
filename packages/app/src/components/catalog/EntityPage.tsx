@@ -54,6 +54,7 @@ import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 
 import { EntityCircleCIContent, isCircleCIAvailable } from '@backstage/plugin-circleci';
+import { EntityJenkinsContent } from '@backstage/plugin-jenkins';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -168,8 +169,9 @@ const serviceEntityPage = (
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
     </EntityLayout.Route>
-    <EntityLayout.Route path="/github-actions" title="GitHub Actions">
-      <EntityGithubActionsContent />
+
+    <EntityLayout.Route path="/jenkins" title="Jenkins">
+      <EntityJenkinsContent />
     </EntityLayout.Route>
   </EntityLayout>
 );

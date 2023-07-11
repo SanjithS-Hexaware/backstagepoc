@@ -5,6 +5,7 @@ import type { PluginEnvironment } from '../types';
 import { createBuiltinActions } from '@backstage/plugin-scaffolder-backend';
 import { ScmIntegrations } from '@backstage/integration';
 import { createRunYeomanAction } from '@backstage/plugin-scaffolder-backend-module-yeoman';
+import { repoCheckAction } from './scaffolder/actions/repo-check';
 
 export default async function createPlugin(
   env: PluginEnvironment,
@@ -19,7 +20,7 @@ export default async function createPlugin(
     config: env.config,
     reader: env.reader,
   });
-  const actions = [...builtInActions, createRunYeomanAction()];
+  const actions = [...builtInActions, createRunYeomanAction(), repoCheckAction()];
 
   return await createRouter({
     logger: env.logger,
