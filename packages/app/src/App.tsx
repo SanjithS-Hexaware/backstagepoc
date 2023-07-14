@@ -38,6 +38,8 @@ import { microsoftAuthApiRef } from '@backstage/core-plugin-api';
 
 import { HomepageCompositionRoot } from '@backstage/plugin-home';
 import { HomePage } from './components/home/HomePage';
+import { RepositoryCheckPluginPage } from '@internal/plugin-repository-check-plugin';
+
 
 const app = createApp({
   components: {
@@ -111,6 +113,8 @@ const routes = (
     </Route>
     <Route path="/settings" element={<UserSettingsPage />} />
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
+
+    <Route path="/repository-check-plugin" element={<RepositoryCheckPluginPage />} />
   </FlatRoutes>
 );
 

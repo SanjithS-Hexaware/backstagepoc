@@ -2,9 +2,9 @@ import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import axios from 'axios'
 import { z } from 'zod';
 
-export const repoCheckAction = () => {
+export const azureDeplyAction = () => {
   return createTemplateAction({
-    id: 'github:repo:check',
+    id: 'azure:code:deploy',
     schema: {
       input: z.object({
         owner: z
